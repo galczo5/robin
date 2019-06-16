@@ -1,7 +1,10 @@
 import { Queue } from "./Queue";
 
 export class SimpleQueue implements Queue {
-    constructor(private list: Array<string>) { }
+
+    private list: Array<string> = [];
+
+    constructor() { }
 
     get(): string {
         if (!this.list.length) {
@@ -16,6 +19,10 @@ export class SimpleQueue implements Queue {
 
     add(memberName: string): void {
         this.list.push(memberName);
+    }
+
+    reset(members: Array<string>): void {
+        this.list = members;
     }
 
     remove(memberName: string): void {

@@ -1,6 +1,6 @@
 import { GroupLog } from "./GroupLog";
 
-class CompanyLog extends GroupLog {
+export class CompanyLog extends GroupLog {
     static instance: CompanyLog;
 
     constructor() {
@@ -9,6 +9,7 @@ class CompanyLog extends GroupLog {
         }
 
         super();
+        CompanyLog.instance = this;
     }
 }
 

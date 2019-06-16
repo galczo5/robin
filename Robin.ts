@@ -1,21 +1,23 @@
 import { Member } from './Member';
-import { Queue } from './Queue';
 import { Team } from './Team';
 import { Allocation } from './Allocation';
 
-import TeamLog from './TeamLog';
-import CompanyLog from './CompanyLog';
-import { SimpleQueue } from './SimpleQueue';
+import { TeamLog } from './TeamLog';
+import { CompanyLog } from './CompanyLog';
+import { CompanyQueue } from "./CompanyQueue";
+import { TeamQueue } from "./TeamQueue";
 
 export class Robin {
 
     private teams: Array<Team> = [];
 
-    private companyQueue: Queue;
-
     public currentRound: Array<Allocation> = [];
 
-    constructor(private companyMembers: Array<Member>) {
+    constructor(private companyMembers: Array<Member>,
+                private companyQueue: CompanyQueue,
+                private teamQueue: TeamQueue,
+                private companyLog: CompanyLog,
+                private teamLog: TeamLog) {
 
         // Split company into teams
         for (let member of companyMembers) {
@@ -27,10 +29,6 @@ export class Robin {
                 this.teams.push(new Team(member.team, [member]));
             }
         }
-
-        // Init queue for each team
-        this.teams.forEach(t => t.initQueue());
-        this.companyQueue = new SimpleQueue(companyMembers.map(m => m.name));
     }
 
     round() {
@@ -42,9 +40,8 @@ export class Robin {
 
     private teamRound(team: Team): void {
         for (let member of team.members) {
-
-            let teamLog = TeamLog.get(member.name);
-            let companyLog = CompanyLog.get(member.name);
+            let teamLog = this.teamLog.get(member.name);
+            let companyLog = this.companyLog.get(member.name);
 
             teamLog.checkLog(team.members.length - 1);
             companyLog.checkLog(this.companyQueue.size() - team.members.length);
@@ -60,20 +57,23 @@ export class Robin {
     }
 
     private getTeamRevivier(team: Team, currentMember: Member): string {
-        let teamLog = TeamLog.get(currentMember.name);
-        let teamReviewer = team.queue.get();
+        let teamLog = this.teamLog.get(currentMember.name);
+        let queue = this.teamQueue.get(team.name);
+        let teamReviewer = queue.get();
+
         while (!teamLog.canAcceptReviewer(teamReviewer) ||
             currentMember.name === teamReviewer) {
 
-            teamReviewer = team.queue.get();
+            teamReviewer = queue.get();
         }
 
         return teamReviewer;
     }
 
     private getCompanyReviewer(team: Team, currentMember: Member): string {
-        let companyLog = CompanyLog.get(currentMember.name);
+        let companyLog = this.companyLog.get(currentMember.name);
         let companyReviever = this.companyQueue.get();
+
         while (!companyLog.canAcceptReviewer(companyReviever) ||
             !team.canAcceptReviewer(companyReviever) ||
             currentMember.name === companyReviever) {
