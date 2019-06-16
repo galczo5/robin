@@ -1,12 +1,13 @@
-var columnify = require('columnify')
-var fs = require('fs');
-
 import { Member } from './Member';
 import { Queue } from './Queue';
 import { Team } from './Team';
 import { Allocation } from './Allocation';
 
-class Robin {
+import TeamLog from './TeamLog';
+import CompanyLog from './CompanyLog';
+import { SimpleQueue } from './SimpleQueue';
+
+export class Robin {
 
     private teams: Array<Team> = [];
 
@@ -17,7 +18,7 @@ class Robin {
     constructor(private companyMembers: Array<Member>) {
 
         // Split company into teams
-        for(let member of companyMembers) {
+        for (let member of companyMembers) {
             let team = this.getTeamByName(member.team);
             if (team) {
                 team.members.push(member);
@@ -29,34 +30,41 @@ class Robin {
 
         // Init queue for each team
         this.teams.forEach(t => t.initQueue());
-        this.companyQueue = new Queue(companyMembers.map(m => m.name));
+        this.companyQueue = new SimpleQueue(companyMembers.map(m => m.name));
     }
 
     round() {
         this.currentRound = [];
-        for(let team of this.teams) {
+        for (let team of this.teams) {
             this.teamRound(team);
         }
     }
 
     private teamRound(team: Team): void {
         for (let member of team.members) {
-            member.teamLogCheck(team.members.length);
-            member.companyLogCheck(this.companyQueue.size());
-            
+
+            let teamLog = TeamLog.get(member.name);
+            let companyLog = CompanyLog.get(member.name);
+
+            teamLog.checkLog(team.members.length - 1);
+            companyLog.checkLog(this.companyQueue.size() - team.members.length);
+
             let teamReviewer = this.getTeamRevivier(team, member);
-            member.addTeamReviever(teamReviewer);
+            teamLog.addReviever(teamReviewer);
 
             let companyReviever = this.getCompanyReviewer(team, member);
-            member.addCompanyReviewer(companyReviever);
+            companyLog.addReviever(companyReviever);
 
             this.currentRound.push(new Allocation(member.name, teamReviewer, companyReviever));
         }
     }
 
     private getTeamRevivier(team: Team, currentMember: Member): string {
+        let teamLog = TeamLog.get(currentMember.name);
         let teamReviewer = team.queue.get();
-        while (!currentMember.canAcceptReviewer(teamReviewer)) {
+        while (!teamLog.canAcceptReviewer(teamReviewer) ||
+            currentMember.name === teamReviewer) {
+
             teamReviewer = team.queue.get();
         }
 
@@ -64,8 +72,12 @@ class Robin {
     }
 
     private getCompanyReviewer(team: Team, currentMember: Member): string {
+        let companyLog = CompanyLog.get(currentMember.name);
         let companyReviever = this.companyQueue.get();
-        while (!currentMember.canAcceptReviewer(companyReviever) || !team.canAcceptReviewer(companyReviever)) {
+        while (!companyLog.canAcceptReviewer(companyReviever) ||
+            !team.canAcceptReviewer(companyReviever) ||
+            currentMember.name === companyReviever) {
+
             companyReviever = this.companyQueue.get();
         }
 
