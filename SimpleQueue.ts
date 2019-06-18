@@ -32,4 +32,8 @@ export class SimpleQueue implements Queue {
     size(): number {
         return this.list.length;
     }
+
+    toArray(): Array<string> {
+        return this.list;
+    }
 }

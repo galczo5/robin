@@ -13,4 +13,13 @@ export class TeamLog extends GroupLog {
     }
 }
 
+export function initTeamLog(map: { [key:string]:Array<string> }): TeamLog {
+    let log = new TeamLog();
+    for (let key in map) {
+        log.set(key, map[key]);
+    }
+
+    return log;
+}
+
 export default new TeamLog();

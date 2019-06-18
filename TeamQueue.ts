@@ -36,19 +36,25 @@ export class TeamQueue {
         this.teamMap.set(teamName, queue);
         return this.teamMap.get(teamName);
     }
+
+    toObj(): { [key:string]:Array<string> } {
+        let result = {};
+
+        this.teamMap.forEach((val, key) => {
+            result[key] = val.toArray();
+        });
+
+        return result;
+    }
 }
 
-export function initTeamQueue(members: Array<Member>) {
+export function initTeamQueue(map: { [key:string]:Array<string> }): TeamQueue {
     let teamQueue = new TeamQueue();
-    for (let member of members) {
-        if (teamQueue.queueExists(member.team)) {
-            let queue = teamQueue.get(member.team);
-            queue.add(member.name);
-        }
-        else {
-            teamQueue.createQueue(member.team, [member.name]);
-        }
+    for (let team in map) {
+        teamQueue.createQueue(team, map[team]);
     }
+
+    return teamQueue;
 }
 
 export default new TeamQueue();

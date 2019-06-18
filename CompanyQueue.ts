@@ -16,9 +16,10 @@ export class CompanyQueue extends SimpleQueue {
     }
 }
 
-export function initCompanyQueue(members: Array<Member>) {
+export function initCompanyQueue(members: Array<Member>): CompanyQueue {
     let queue = new CompanyQueue();
     queue.reset(members.map(x => x.name));
+    return queue;
 }
 
 export default new CompanyQueue();
