@@ -1,5 +1,5 @@
 import {SimpleQueue} from "./SimpleQueue";
-import {Member} from "./Member";
+import {Member} from "../team/Member";
 
 export class CompanyQueue extends SimpleQueue {
 

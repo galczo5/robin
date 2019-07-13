@@ -1,11 +1,11 @@
-import { Member } from './Member';
-import { Team } from './Team';
-import { Allocation } from './Allocation';
+import { Member } from './team/Member';
+import { Team } from './team/Team';
+import { Allocation } from './file/Allocation';
 
-import { TeamLog } from './TeamLog';
-import { CompanyLog } from './CompanyLog';
-import { CompanyQueue } from "./CompanyQueue";
-import { TeamQueue } from "./TeamQueue";
+import { TeamLog } from './log/TeamLog';
+import { CompanyLog } from './log/CompanyLog';
+import { CompanyQueue } from "./queue/CompanyQueue";
+import { TeamQueue } from "./queue/TeamQueue";
 
 export class Robin {
 

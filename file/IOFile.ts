@@ -1,4 +1,4 @@
-import {Member} from "./Member";
+import {Member} from "../team/Member";
 import {Allocation} from "./Allocation";
 
 export class IOFile {

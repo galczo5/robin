@@ -79,4 +79,4 @@ tests/baselines/reference/dt
 TEST-results.xml
 package-lock.json
 *.js
-*state.json
+*state.json*
