@@ -1,6 +1,5 @@
 import {Queue} from "./Queue";
 import {SimpleQueue} from "./SimpleQueue";
-import {Member} from "../team/Member";
 
 export class TeamQueue {
 

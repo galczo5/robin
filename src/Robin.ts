@@ -1,6 +1,6 @@
 import { Member } from './team/Member';
 import { Team } from './team/Team';
-import { Allocation } from './file/Allocation';
+import { Assignment } from './file/Assignment';
 
 import { TeamLog } from './log/TeamLog';
 import { CompanyLog } from './log/CompanyLog';
@@ -11,7 +11,7 @@ export class Robin {
 
     private teams: Array<Team> = [];
 
-    public currentRound: Array<Allocation> = [];
+    public currentRound: Array<Assignment> = [];
 
     constructor(private companyMembers: Array<Member>,
                 private companyQueue: CompanyQueue,
@@ -52,7 +52,7 @@ export class Robin {
             let companyReviever = this.getCompanyReviewer(team, member);
             companyLog.addReviever(companyReviever);
 
-            this.currentRound.push(new Allocation(member.name, teamReviewer, companyReviever));
+            this.currentRound.push(new Assignment(member.name, teamReviewer, companyReviever));
         }
     }
 
